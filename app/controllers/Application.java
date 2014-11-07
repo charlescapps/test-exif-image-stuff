@@ -33,20 +33,16 @@ public class Application extends Controller {
                 pictureFile.getTotalSpace();
                 logger.info("Total space: {}", pictureFile);
 
-                Image image = new Image(pictureFile);
-
-                ExifImageUtils.rotateFromOrientationData(image);
-
                 File folder = pictureFile.getParentFile();
                 File renamedFile = new File(folder, fileName);
-
-                image.saveAs(renamedFile);
+                
+                File result = ExifImageUtils.rotateFromOrientationData(pictureFile, renamedFile);
 
                // final String absolutePath = pictureFile.getAbsolutePath();
                // final String escapedPath = UrlEscapers.urlPathSegmentEscaper().escape(absolutePath);
 
                // return ok(views.html.main.render(escapedPath));
-                return ok(views.html.main.render(renamedFile.getAbsolutePath()));
+                return ok(views.html.main.render(result.getAbsolutePath()));
             }
 
             return ok("asdf");
