@@ -4,6 +4,6 @@ name := "image-upload"
 
 version := "1.0"
 
-playScalaSettings
+playJavaSettings
 
-libraryDependencies += "com.drewnoakes" % "metadata-extractor" % "2.6.2"
+libraryDependencies ++= Seq("commons-io" % "commons-io" % "2.4")
