@@ -1,15 +1,20 @@
-@(title: String)(content: Html)
+@(fileName: String)
 
 <!DOCTYPE html>
 
 <html>
     <head>
-        <title>@title</title>
+        <title>My image</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
     <body>
-        @content
+        <h1>RESULT of IMAGE ROTATION!</h1>
+
+        <div style="margin: auto">
+            <img src="@routes.Application.getImage(fileName)" />
+
+        </div>
     </body>
 </html>

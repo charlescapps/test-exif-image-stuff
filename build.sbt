@@ -6,4 +6,4 @@ version := "1.0"
 
 playJavaSettings
 
-libraryDependencies ++= Seq("commons-io" % "commons-io" % "2.4")
+libraryDependencies ++= Seq("com.google.guava" % "guava" % "18.0")

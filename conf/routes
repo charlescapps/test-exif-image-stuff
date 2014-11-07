@@ -11,4 +11,5 @@ GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
 POST       /upload              controllers.Application.upload()
 
+GET        /renderImage/:pathToFile            controllers.Application.getImage(pathToFile: String)
     

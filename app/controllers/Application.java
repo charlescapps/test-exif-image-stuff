@@ -1,20 +1,16 @@
 package controllers;
 
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.common.IImageMetadata;
-import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
-import org.apache.commons.imaging.formats.tiff.TiffField;
-import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
-import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
-import org.apache.commons.imaging.formats.tiff.taginfos.TagInfo;
+import com.google.common.net.UrlEscapers;
+import imaging.ExifImageUtils;
+import javaxt.io.Image;
 import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class Application extends Controller {
     private static final Logger.ALogger logger = Logger.of(Application.class);
@@ -37,30 +33,20 @@ public class Application extends Controller {
                 pictureFile.getTotalSpace();
                 logger.info("Total space: {}", pictureFile);
 
+                Image image = new Image(pictureFile);
+
+                ExifImageUtils.rotateFromOrientationData(image);
+
                 File folder = pictureFile.getParentFile();
-                File newFile = new File(folder, fileName);
-                pictureFile.renameTo(newFile);
+                File renamedFile = new File(folder, fileName);
 
-                final IImageMetadata metadata = Imaging.getMetadata(newFile);
+                image.saveAs(renamedFile);
 
+               // final String absolutePath = pictureFile.getAbsolutePath();
+               // final String escapedPath = UrlEscapers.urlPathSegmentEscaper().escape(absolutePath);
 
-                JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-
-                List<? extends IImageMetadata.IImageMetadataItem> items = jpegMetadata.getExif().getItems();
-                for (IImageMetadata.IImageMetadataItem item: items) {
-                    logger.info(String.valueOf(item));
-
-                    if (item instanceof TiffImageMetadata.Item && "Orientation".equals(((TiffImageMetadata.Item) item).getKeyword())) {
-                        logger.info("Found Orientation tag: {}", item);
-                    }
-                }
-
-
-               // TagInfo tagInfo = new TagInfo("Orientation", ExifTagConstants.)
-              //  TiffField tiffField = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_PREVIEW_IMAGE_START_IFD0);
-
-              //  logger.info(String.valueOf(tiffField));
-
+               // return ok(views.html.main.render(escapedPath));
+                return ok(views.html.main.render(renamedFile.getAbsolutePath()));
             }
 
             return ok("asdf");
@@ -68,6 +54,12 @@ public class Application extends Controller {
             logger.error("Error uploading", e);
             return internalServerError(e.getMessage());
         }
+    }
+
+
+    public static Result getImage(final String pathToFile) throws IOException {
+        File file = new File(pathToFile);
+        return ok(Files.readAllBytes(file.toPath())).as("image/jpg");
     }
 
 
